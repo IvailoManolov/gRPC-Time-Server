@@ -1,14 +1,14 @@
 using gRPC_Time_Server.Middleware;
 using gRPC_Time_Server.Services;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using System.Security.Cryptography.X509Certificates;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseWindowsService();
 
-// Add services to the container.
+// Add gRPC
 builder.Services.AddGrpc();
+
 #endregion
 
 #region Custom Certificate
@@ -52,7 +52,7 @@ app.UseMiddleware<RequireHttpsMiddleware>();
 
 
 #region HTTP Pipelines
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 app.MapGrpcService<GreeterService>();
 app.MapGrpcService<TimeService>();
 #endregion

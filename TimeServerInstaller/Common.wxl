@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  
+	<String Id="ProductName_x86">Time Server (32bit)</String>
+  <String Id="ProductName_x64">Time Server (64bit)</String>
+  
+  <String Id="ProductNameFolder">TimeServer_Manolov</String>
+
+
+  <String Id="Company">Manolov</String>
+  
+  <String Id="Description">Best product in the world!</String>
+  <String Id="Comments">Log your time of entry</String>
+  <String Id="Keywords">TimeService</String>
+
+
+  <String Id="DowngradeErrorMessage">A newer version of the product is already installed!</String>
+  
+
+</WixLocalization>

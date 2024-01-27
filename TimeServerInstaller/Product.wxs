@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  
+  <?if $(var.Platform)=x64?>
+		<?define ProductCode = "{16659743-0AC0-4F23-9B4D-BE6845CEFA4F}"?>
+  <?else?>
+		<?define ProductCode = "{B7BD9580-5BB9-489B-AF4B-B4A32D29389F}"?>
+  <?endif?>
+  
+  <?define BuildVersion = 1.2.3.0?>
+  
+	<Product Id="$(var.ProductCode)" Name="!(loc.ProductName_$(var.Platform))" Language="1033" Version="$(var.BuildVersion)" Manufacturer="!(loc.Company)" UpgradeCode="88e7fba2-1611-4d44-83c6-9f76da9f711a">
+    
+		<Package InstallerVersion="200"
+             Compressed="yes"
+             InstallScope="perMachine"
+             Platform="$(var.Platform)"
+             Manufacturer="!(loc.Company)"
+             Description="!(loc.Description)"
+             Keywords="!(loc.Keywords)"
+             Comments="!(loc.Comments)"
+             />
+
+		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeErrorMessage)" />
+    
+		<MediaTemplate
+      EmbedCab="yes"
+      />
+    
+    <!-- Basic UI for installer-->
+    <UIRef
+      Id="WixUI_Minimal"
+      />
+
+		<Feature Id="ProductFeature" Title="TimeServerInstaller" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		
+    </Feature>
+    
+	</Product>
+
+
+</Wix>
