@@ -11,4 +11,4 @@ Console App Client for easy interaction with the gRPC service.
 --The gRPC service
 
 
-NOTE: Would make quite a bigger and flashier client but for some reason integrating the gRPC in React was quite ambigious to me :P
+NOTE: Would make quite a bigger and flashier client but for some reason integrating the gRPC in React was quite ambiguous to me :)
