@@ -1,9 +1,13 @@
 ﻿using Grpc.Core;
 using gRPC_Time_Server.Attributes;
+using gRPC_Time_Server.Data;
+using gRPC_Time_Server.Data.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace gRPC_Time_Server.Services
 {
-    public class TimeService: gRPC_Time_Server.TimeService.TimeServiceBase
+    public class TimeService : gRPC_Time_Server.TimeService.TimeServiceBase
     {
         #region Props
         private readonly ILogger<TimeService> _logger;
@@ -38,23 +42,63 @@ namespace gRPC_Time_Server.Services
 
             LogTimeInFileDB(currentTime);
 
+            Task.Run(async () => await LogTimeInDB(currentTime));
+
             return Task.FromResult(new TimeResponse { CurrentTime = "LoggedTime in DB." });
         }
 
-        [RequireHttps]
-        public override Task<QueryResponse> QueryTimeDatabase(Certificate certificate, ServerCallContext context)
+        private async Task LogTimeInDB(string currentTime)
         {
-            var timeLogs = GetTimeLogs();
+            try
+            {
+                var dbContext = ServiceHelper.ExtractDataContext();
 
-            if(timeLogs.Count <= 0)
-                return Task.FromResult(new QueryResponse { TimeLogs = { "Storage File not found!" } });
+                var timeEntry = new TimeRegistry { timeEntry = currentTime };
 
-            // If timelogs are not empty, we have at least 1 entry.
-            return Task.FromResult(new QueryResponse { TimeLogs = { timeLogs } });
+                dbContext.TimeRegistries.Add(timeEntry);
+
+                await dbContext.SaveChangesAsync();
+            }
+            catch(Exception e)
+            {
+
+            }
+            
         }
+
+        [RequireHttps]
+        public override async Task<QueryResponse> QueryTimeDatabase(Certificate certificate, ServerCallContext context)
+        {
+            //Extract through the DB.
+            var timeLogs = GetTimeLogsFromDB();
+
+            return await Task.Run(async () => await GetTimeLogsFromDB());
+        }
+
         #endregion
 
         #region private
+
+        //Extract from SQLServer.
+        private async Task<QueryResponse> GetTimeLogsFromDB()
+        {
+            var dbContext = ServiceHelper.ExtractDataContext();
+
+            var timeLogs = await dbContext.TimeRegistries.ToListAsync();
+
+            var timeLogCombined = "";
+
+            // Using StringBuilder for efficient string concatenation
+            StringBuilder stringBuilder = new StringBuilder();
+
+            foreach (var str in timeLogs)
+            {
+                stringBuilder.Append(str.timeEntry);
+            }
+
+            return new QueryResponse { TimeLogs = { stringBuilder.ToString() } };
+        }
+
         // Write the logs to a custom file.
         private void LogTimeInFileDB(string currentTime)
         {

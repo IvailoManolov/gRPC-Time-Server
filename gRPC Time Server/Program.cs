@@ -1,6 +1,8 @@
 using gRPC_Time_Server;
+using gRPC_Time_Server.Data;
 using gRPC_Time_Server.Middleware;
 using gRPC_Time_Server.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceProcess;
@@ -8,11 +10,11 @@ using TimeService = gRPC_Time_Server.Services.TimeService;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Host.UseWindowsService();
 
 // Add gRPC
 builder.Services.AddGrpc();
-
 
 #endregion
 
@@ -50,22 +52,19 @@ builder.WebHost.ConfigureKestrel(opt =>
 
 var app = builder.Build();
 
-
-
 #region Middleware
 // Adding middleware to ensure https method for retrieval of DB times.
 app.UseMiddleware<RequireHttpsMiddleware>();
 #endregion
 
-
 #region HTTP Pipelines
 // Configure the HTTP request pipeline
 app.MapGrpcService<GreeterService>();
 app.MapGrpcService<TimeService>();
+
 #endregion
 
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-
 
 // Run as a Windows Service
 //using (var service = new ServiceRunner(app))

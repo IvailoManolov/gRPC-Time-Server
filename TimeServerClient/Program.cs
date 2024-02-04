@@ -9,8 +9,8 @@ internal class Program
         Console.WriteLine("Press any key to continue... and ESC to exit");
         Console.ReadLine();
 
-        using var notSecureChannel = GrpcChannel.ForAddress("http://localhost:5000");
-        using var secureChannel = GrpcChannel.ForAddress("https://localhost:5001");
+        using var notSecureChannel = GrpcChannel.ForAddress("http://localhost:5151");
+        using var secureChannel = GrpcChannel.ForAddress("https://localhost:7149");
 
         var client = new TimeService.TimeServiceClient(notSecureChannel);
         var secureClient = new TimeService.TimeServiceClient(secureChannel);
